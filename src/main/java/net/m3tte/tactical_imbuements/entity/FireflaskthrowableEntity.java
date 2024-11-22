@@ -4,6 +4,7 @@ package net.m3tte.tactical_imbuements.entity;
 import net.m3tte.tactical_imbuements.procedures.FlaskImpact;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModEntities;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -41,7 +42,7 @@ public class FireflaskthrowableEntity extends AbstractArrow implements ItemSuppl
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
@@ -65,7 +66,7 @@ public class FireflaskthrowableEntity extends AbstractArrow implements ItemSuppl
 	@Override
 	public void onHitEntity(EntityHitResult entityHitResult) {
 		super.onHitEntity(entityHitResult);
-		FlaskImpact.fireImpact(this.level, this.getX(), this.getY(), this.getZ());
+		FlaskImpact.fireImpact(this.level(), this.getX(), this.getY(), this.getZ());
 		if (!this.isRemoved()) {
 			this.discard();
 		}
@@ -74,7 +75,7 @@ public class FireflaskthrowableEntity extends AbstractArrow implements ItemSuppl
 	@Override
 	public void onHitBlock(BlockHitResult blockHitResult) {
 		super.onHitBlock(blockHitResult);
-		FlaskImpact.fireImpact(this.level, this.getX(), this.getY(), this.getZ());
+		FlaskImpact.fireImpact(this.level(), this.getX(), this.getY(), this.getZ());
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class FireflaskthrowableEntity extends AbstractArrow implements ItemSuppl
 	}
 
 	public static FireflaskthrowableEntity shoot(LivingEntity entity, LivingEntity target) {
-		FireflaskthrowableEntity entityarrow = new FireflaskthrowableEntity(TacticalImbuementsModEntities.FIREFLASKTHROWABLE.get(), entity, entity.level);
+		FireflaskthrowableEntity entityarrow = new FireflaskthrowableEntity(TacticalImbuementsModEntities.FIREFLASKTHROWABLE.get(), entity, entity.level());
 		double dx = target.getX() - entity.getX();
 		double dy = target.getY() + target.getEyeHeight() - 1.1;
 		double dz = target.getZ() - entity.getZ();
@@ -106,8 +107,8 @@ public class FireflaskthrowableEntity extends AbstractArrow implements ItemSuppl
 		entityarrow.setBaseDamage(5);
 		entityarrow.setKnockback(1);
 		entityarrow.setCritArrow(false);
-		entity.level.addFreshEntity(entityarrow);
-		entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("entity.arrow.shoot")), SoundSource.PLAYERS, 1, 1f / (new Random().nextFloat() * 0.5f + 1));
+		entity.level().addFreshEntity(entityarrow);
+		entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("entity.arrow.shoot")), SoundSource.PLAYERS, 1, 1f / (new Random().nextFloat() * 0.5f + 1));
 		return entityarrow;
 	}
 }

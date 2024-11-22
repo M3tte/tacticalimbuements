@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,8 +34,8 @@ public class DecayingMobEffect extends MobEffect {
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
 
-        Level entityLevel = entity.getLevel();
-        Random r = new Random();
+        Level level = entity.level();
+        RandomSource r = entity.getRandom();
         ServerPlayer pl = null;
         if (entity instanceof ServerPlayer _pl) {
             pl = _pl;
@@ -44,28 +45,25 @@ public class DecayingMobEffect extends MobEffect {
             for (ItemStack i : entity.getArmorSlots()) {
                 i.hurt(amplifier + 1, r, pl);
                 if (i.getDamageValue() > i.getMaxDamage()) {
-                    if (!entity.level.isClientSide()) {
-                        entity.level.playSound(null, new BlockPos(entity.getX(), entity.getY() + entity.getBbHeight()/2, entity.getZ()), SoundEvents.ITEM_BREAK, SoundSource.NEUTRAL, 1, (float) 1);
-                        entity.level.playSound(null, new BlockPos(entity.getX(), entity.getY() + entity.getBbHeight()/2, entity.getZ()), SoundEvents.AXE_WAX_OFF, SoundSource.NEUTRAL, 1, (float) 1);
-                        ((ServerLevel) entity.level).sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get()), (entity.getX()), (entity.getY() + 1), (entity.getZ()), 10, 0.2, 0.4, 0.2, 0);
+                    if (!level.isClientSide()) {
+                        level.playSound(null, BlockPos.containing(entity.getX(), entity.getY() + entity.getBbHeight()/2, entity.getZ()), SoundEvents.ITEM_BREAK, SoundSource.NEUTRAL, 1, (float) 1);
+                        level.playSound(null, BlockPos.containing(entity.getX(), entity.getY() + entity.getBbHeight()/2, entity.getZ()), SoundEvents.AXE_WAX_OFF, SoundSource.NEUTRAL, 1, (float) 1);
+                        ((ServerLevel) level).sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get()), (entity.getX()), (entity.getY() + 1), (entity.getZ()), 10, 0.2, 0.4, 0.2, 0);
                     }
                     i.shrink(1);
                 }
                 if (amplifier == 0) {
-                    if (entityLevel instanceof ServerLevel svr)
-                        svr.sendParticles((SimpleParticleType) (ParticleTypes.CRIT), (entity.getX()), (entity.getY() + entity.getBbHeight()/2), (entity.getZ()), 1, 0.3, 0.5, 0.3, 0.01);
+                    if (level instanceof ServerLevel svr)
+                        svr.sendParticles(ParticleTypes.CRIT, (entity.getX()), (entity.getY() + entity.getBbHeight()/2), (entity.getZ()), 1, 0.3, 0.5, 0.3, 0.01);
                 } else {
-                    if (entityLevel instanceof ServerLevel svr)
-                        svr.sendParticles((SimpleParticleType) (ParticleTypes.ENCHANTED_HIT), (entity.getX()), (entity.getY() + entity.getBbHeight()/2), (entity.getZ()), 1, 0.3, 0.5, 0.3, 0.01);
+                    if (level instanceof ServerLevel svr)
+                        svr.sendParticles(ParticleTypes.ENCHANTED_HIT, (entity.getX()), (entity.getY() + entity.getBbHeight()/2), (entity.getZ()), 1, 0.3, 0.5, 0.3, 0.01);
                 }
 
             }
         }
 
-
-
-
-        if (entityLevel instanceof ServerLevel svr) {
+        if (level instanceof ServerLevel svr) {
             svr.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get()), (entity.getX()), (entity.getY() + entity.getBbHeight()/2), (entity.getZ()), 1, 0.2, 0.4, 0.2, 0.01);
         }
 

@@ -41,8 +41,8 @@ public class FlaskImpact {
 
 		if (world instanceof Level _level) {
 			if (!_level.isClientSide()) {
-				_level.playSound(null, new BlockPos(x, y + 1, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
-				_level.playSound(null, new BlockPos(x, y + 1, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 1, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 1, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
 			}
 		}
 		{
@@ -50,7 +50,7 @@ public class FlaskImpact {
 			List<Entity> _entfound = world.getEntitiesOfClass(Entity.class, new AABB(_center, _center).inflate(7 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(_center))).collect(Collectors.toList());
 			for (Entity entityiterator : _entfound) {
 				entityiterator.setSecondsOnFire(15);
-				entityiterator.hurt(DamageSource.ON_FIRE, 4);
+				entityiterator.hurt(entityiterator.damageSources().onFire(), 4);
 				if (world instanceof ServerLevel _level)
 					_level.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.FLAME_PARTICLE.get()), (entityiterator.getX()), (entityiterator.getY() + 1), (entityiterator.getZ()), 10, 0.2, 0.4, 0.2, 0.2);
 			}
@@ -66,8 +66,8 @@ public class FlaskImpact {
 
 		if (world instanceof Level _level) {
 			if (!_level.isClientSide()) {
-				_level.playSound(null, new BlockPos(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
-				_level.playSound(null, new BlockPos(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
 			}
 		}
 		{
@@ -75,7 +75,7 @@ public class FlaskImpact {
 			List<Entity> _entfound = world.getEntitiesOfClass(Entity.class, new AABB(_center, _center).inflate(7 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(_center))).collect(Collectors.toList());
 			for (Entity entityiterator : _entfound) {
 				if (entityiterator instanceof LivingEntity livingEntity) {
-					livingEntity.hurt(DamageSource.MAGIC, 2);
+					livingEntity.hurt(livingEntity.damageSources().magic(), 2);
 					if (world instanceof ServerLevel _level)
 						_level.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get()), (entityiterator.getX()), (entityiterator.getY() + 1), (entityiterator.getZ()), 10, 0.2, 0.4, 0.2, 0.2);
 					livingEntity.addEffect(new MobEffectInstance(TacticalImbuementsMobEffects.DECAYING.get(), 200, 1 ));
@@ -88,6 +88,7 @@ public class FlaskImpact {
 
 	public static void tryIncreaseFreeze(int potencyMod, float amount, LivingEntity victim) {
 
+		Level level = victim.level();
 		if (victim.hasEffect(TacticalImbuementsMobEffects.CHILLED.get())) {
 
 			int potency = victim.getEffect(TacticalImbuementsMobEffects.CHILLED.get()).getAmplifier() + potencyMod;
@@ -95,8 +96,8 @@ public class FlaskImpact {
 				victim.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, (int)(amount * 9), (int)((potency + 1) / 3)));
 				victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,  (int)(amount * 9), (int)((potency + 1) / 3)));
 				victim.addEffect(new MobEffectInstance(TacticalImbuementsMobEffects.CHILLED.get(),  (int)(amount * 9), potency));
-				if (!victim.level.isClientSide())
-					victim.level.playSound(null, new BlockPos(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 1, 1);
+				if (!level.isClientSide())
+					level.playSound(null, BlockPos.containing(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 1, 1);
 
 			} else {
 				victim.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, (int)(amount * 8),3));
@@ -105,7 +106,7 @@ public class FlaskImpact {
 			}
 		} else {
 
-			victim.level.playSound(null, new BlockPos(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 0.3f, 1.3f);
+			level.playSound(null, BlockPos.containing(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 0.3f, 1.3f);
 			victim.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, (int)(amount * 8), 0));
 			victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (int)(amount * 8), 0));
 			victim.addEffect(new MobEffectInstance(TacticalImbuementsMobEffects.CHILLED.get(), (int)(amount * 8), 0), victim);
@@ -123,8 +124,8 @@ public class FlaskImpact {
 
 		if (world instanceof Level _level) {
 			if (!_level.isClientSide()) {
-				_level.playSound(null, new BlockPos(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
-				_level.playSound(null, new BlockPos(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
 			}
 		}
 		{
@@ -132,7 +133,7 @@ public class FlaskImpact {
 			List<Entity> _entfound = world.getEntitiesOfClass(Entity.class, new AABB(_center, _center).inflate(7 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(_center))).collect(Collectors.toList());
 			for (Entity entityiterator : _entfound) {
 				if (entityiterator instanceof LivingEntity livingEntity) {
-					livingEntity.hurt(DamageSource.FREEZE, 2);
+					livingEntity.hurt(livingEntity.damageSources().freeze(), 2);
 					if (world instanceof ServerLevel _level)
 						_level.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.FREEZE_PARTICLE.get()), (entityiterator.getX()), (entityiterator.getY() + 1), (entityiterator.getZ()), 10, 0.2, 0.4, 0.2, 0.2);
 					tryIncreaseFreeze(3, 50, livingEntity);
@@ -151,8 +152,8 @@ public class FlaskImpact {
 
 		if (world instanceof Level _level) {
 			if (!_level.isClientSide()) {
-				_level.playSound(null, new BlockPos(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
-				_level.playSound(null, new BlockPos(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.glass.break")), SoundSource.NEUTRAL, 1, 1);
+				_level.playSound(null, BlockPos.containing(x, y + 0.2, z), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
 			}
 		}
 		{
@@ -162,12 +163,12 @@ public class FlaskImpact {
 				System.out.println("Entity: "+entityiterator);
 				if (entityiterator instanceof LivingEntity living) {
 					System.out.println("LivingEntity: "+entityiterator);
-					living.hurt(DamageSource.LIGHTNING_BOLT, 2);
+					living.hurt(living.damageSources().lightningBolt(), 2);
 
 					EntityPatch<?> entitypatch = living.getCapability(EpicFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
 
 					if (entitypatch instanceof LivingEntityPatch<?> livingPatch) {
-						if (livingPatch.getArmature() instanceof HumanoidArmature && !(entityiterator.level.isClientSide())) {
+						if (livingPatch.getArmature() instanceof HumanoidArmature && !(entityiterator.level().isClientSide())) {
 							livingPatch.playAnimationSynchronized(ImbuementAnims.ZAP_HEAVY, 0);
 						}
 					}

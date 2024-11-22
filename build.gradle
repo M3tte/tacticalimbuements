@@ -1,20 +1,19 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = "https://repo.spongepowered.org/maven" }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 plugins {
     id 'eclipse'
     id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 version = '0.8'
@@ -26,7 +25,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'parchment', version: '2023.06.26-1.20.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -84,9 +83,9 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.2.0'
+    minecraft 'net.minecraftforge:forge:1.20.1-47.2.20'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation fg.deobf('curse.maven:epicfight-405076:4785517')
+    implementation fg.deobf('curse.maven:epicfight-405076:5159623')
 }
 
 
@@ -115,5 +114,4 @@ tasks.withType(JavaCompile).configureEach {
 // This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')
 
-apply from: 'mcreator.gradle'
 

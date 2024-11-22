@@ -1,9 +1,10 @@
 
 package net.m3tte.tactical_imbuements.entity;
 
-import net.m3tte.tactical_imbuements.procedures.EmptyflaskimpactProcedure;
+import net.m3tte.tactical_imbuements.procedures.EmptyFlaskImpactProcedure;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModEntities;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -41,7 +42,7 @@ public class EmptyflaskthrowableEntity extends AbstractArrow implements ItemSupp
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
@@ -65,7 +66,7 @@ public class EmptyflaskthrowableEntity extends AbstractArrow implements ItemSupp
 	@Override
 	public void onHitEntity(EntityHitResult entityHitResult) {
 		super.onHitEntity(entityHitResult);
-		EmptyflaskimpactProcedure.execute(this.level, this.getX(), this.getY(), this.getZ());
+		EmptyFlaskImpactProcedure.execute(this.level(), this.getX(), this.getY(), this.getZ());
 		if (!this.isRemoved())
 			this.discard();
 	}
@@ -73,7 +74,7 @@ public class EmptyflaskthrowableEntity extends AbstractArrow implements ItemSupp
 	@Override
 	public void onHitBlock(BlockHitResult blockHitResult) {
 		super.onHitBlock(blockHitResult);
-		EmptyflaskimpactProcedure.execute(this.level, this.getX(), this.getY(), this.getZ());
+		EmptyFlaskImpactProcedure.execute(this.level(), this.getX(), this.getY(), this.getZ());
 
 	}
 
@@ -98,7 +99,7 @@ public class EmptyflaskthrowableEntity extends AbstractArrow implements ItemSupp
 	}
 
 	public static EmptyflaskthrowableEntity shoot(LivingEntity entity, LivingEntity target) {
-		EmptyflaskthrowableEntity entityarrow = new EmptyflaskthrowableEntity(TacticalImbuementsModEntities.EMPTYFLASKTHROWABLE.get(), entity, entity.level);
+		EmptyflaskthrowableEntity entityarrow = new EmptyflaskthrowableEntity(TacticalImbuementsModEntities.EMPTYFLASKTHROWABLE.get(), entity, entity.level());
 		double dx = target.getX() - entity.getX();
 		double dy = target.getY() + target.getEyeHeight() - 1.1;
 		double dz = target.getZ() - entity.getZ();
@@ -108,8 +109,8 @@ public class EmptyflaskthrowableEntity extends AbstractArrow implements ItemSupp
 		entityarrow.setKnockback(5);
 		entityarrow.setCritArrow(false);
 		entityarrow.setSecondsOnFire(100);
-		entity.level.addFreshEntity(entityarrow);
-		entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("entity.arrow.shoot")), SoundSource.PLAYERS, 1, 1f / (new Random().nextFloat() * 0.5f + 1));
+		entity.level().addFreshEntity(entityarrow);
+		entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("entity.arrow.shoot")), SoundSource.PLAYERS, 1, 1f / (new Random().nextFloat() * 0.5f + 1));
 		return entityarrow;
 	}
 }

@@ -17,6 +17,8 @@ import net.m3tte.tactical_imbuements.EpicFight.ImbuementAnims;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsMobEffects;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -50,12 +52,25 @@ public class TacticalImbuementsMod {
 		TacticalImbuementsModEntities.REGISTRY.register(bus);
 		TacticalImbuementsMobEffects.REGISTRY.register(bus);
 		bus.addListener(ImbuementAnims::registerAnimations);
-
+		bus.addListener(this::addModItems);
 		TacticalImbuementsModParticleTypes.REGISTRY.register(bus);
 	}
 
 	public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<NetworkEvent.Context>> messageConsumer) {
 		PACKET_HANDLER.registerMessage(messageID, messageType, encoder, decoder, messageConsumer);
 		messageID++;
+	}
+
+	public void addModItems(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+			event.accept(TacticalImbuementsModItems.FLASK_OF_FLAME::get);
+			event.accept(TacticalImbuementsModItems.FLASK_OF_ICE::get);
+			event.accept(TacticalImbuementsModItems.FLASK_OF_SPARKS::get);
+			event.accept(TacticalImbuementsModItems.FLASK_OF_VENOM::get);
+		}
+
+		if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+			event.accept(TacticalImbuementsModItems.FLASK::get);
+		}
 	}
 }

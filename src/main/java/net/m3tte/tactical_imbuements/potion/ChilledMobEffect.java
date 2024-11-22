@@ -21,10 +21,8 @@ public class ChilledMobEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-
-        Level entityLevel = entity.getLevel();
-
-        if (entityLevel instanceof ServerLevel svr) {
+        Level level = entity.level();
+        if (level instanceof ServerLevel svr) {
             svr.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.FREEZE_PARTICLE.get()), (entity.getX()), (entity.getY() + entity.getBbHeight()/2), (entity.getZ()), 1, 0.2, 0.4, 0.2, 0.01);
         }
 

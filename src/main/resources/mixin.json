@@ -18,6 +18,7 @@
   ],
   "client": [
     "ItemRendererMixin",
+    "GuiGraphicsMixin",
     "rectFillInvoker"
   ],
   "minVersion": "0.8"

@@ -90,7 +90,7 @@ public class ImbuementAnims {
         arr[0] = TimeStampedEvent.create(4, (entitypatch, animation, params) -> {
 
             if (entitypatch.getOriginal() instanceof Player p && hasImbueable(p)) {
-                UseImbueFlasks.calculateImbuementUsage(p.level, p);
+                UseImbueFlasks.calculateImbuementUsage(p.level(), p);
             }
 
         }, Side.SERVER);
@@ -104,7 +104,7 @@ public class ImbuementAnims {
 
         arr[0] = TimeStampedEvent.create(4, (entitypatch, animation, params) -> {
             LivingEntity entity = entitypatch.getOriginal();
-            if (entitypatch.getOriginal().level instanceof ServerLevel _level)
+            if (entitypatch.getOriginal().level() instanceof ServerLevel _level)
                 _level.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.SPARK_PARTICLE.get()), (entity.getX()), (entity.getY() + entity.getBbHeight() / 2), (entity.getZ()), 1, 0.2, 0.4, 0.2, 0);
 
         }, Side.BOTH);
@@ -117,11 +117,11 @@ public class ImbuementAnims {
 
 
         arr[0] = AnimationEvent.create((entitypatch, animation, params) -> {
-            if (entitypatch.getOriginal().level instanceof ServerLevel _level)
+            if (entitypatch.getOriginal().level() instanceof ServerLevel _level)
                 _level.sendParticles((SimpleParticleType) (ParticleTypes.LARGE_SMOKE), (entitypatch.getOriginal().getX()), (entitypatch.getOriginal().getY() + entitypatch.getOriginal().getBbHeight() / 2), (entitypatch.getOriginal().getZ()), 20, 0.2, 0.4, 0.2, 0.3);
 
 
-            LevelUtil.circleSlamFracture(entitypatch.getOriginal(), entitypatch.getOriginal().level, entitypatch.getOriginal().position().add(new Vec3(0, -1, 0)), 4.0d, false, false, false);
+            LevelUtil.circleSlamFracture(entitypatch.getOriginal(), entitypatch.getOriginal().level(), entitypatch.getOriginal().position().add(new Vec3(0, -1, 0)), 4.0d, false, false, false);
         }, Side.BOTH);
 
         return arr;

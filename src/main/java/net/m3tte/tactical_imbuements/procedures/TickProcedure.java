@@ -1,25 +1,19 @@
 package net.m3tte.tactical_imbuements.procedures;
 
 import net.m3tte.tactical_imbuements.definitions.ImbuementDefinitions;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event;
-
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import yesman.epicfight.api.animation.Joint;
@@ -41,8 +35,9 @@ public class TickProcedure {
 
 
 	@SubscribeEvent
-	public static void onEntityTick(LivingEvent.LivingUpdateEvent event) {
-		execute(event, event.getEntityLiving().level, event.getEntityLiving().getX(), event.getEntityLiving().getY(), event.getEntityLiving().getZ(), event.getEntityLiving());
+	public static void onEntityTick(LivingEvent.LivingTickEvent event) {
+		LivingEntity living = event.getEntity();
+		execute(event, living.level(), living.getX(), living.getY(), living.getZ(), living);
 	}
 
 	public static void execute(LevelAccessor world, double x, double y, double z, Entity entity) {
@@ -113,7 +108,7 @@ public class TickProcedure {
 
 
 	private static void clearImbuement(LivingEntity entity, InteractionHand hand) {
-		System.out.println("Clearing imbuement on, clientside?"+entity.level.isClientSide());
+		System.out.println("Clearing imbuement on, clientside?"+entity.level().isClientSide());
 		ItemStack item = entity.getItemInHand(hand);
 
 		item.removeTagKey("imbueCounter");
@@ -148,8 +143,8 @@ public class TickProcedure {
 	private static void doArmatureParticle(Joint j, LivingEntityPatch<?> entityPatch, SimpleParticleType particle, float amount, Vec3 particleSpeed, LinkedList<Vec3> offsets) {
 
 		Pose currentPose = entityPatch.getArmature().getCurrentPose();
-		Level l = entityPatch.getOriginal().level;
-		Random r = l.random;
+		Level l = entityPatch.getOriginal().level();
+		RandomSource r = l.random;
 		for (float i = 1; i <= 9; i += 2f) {
 			Pose middlePose = entityPatch.getArmature().getPose((i + r.nextInt(3) - 1) / 10);
 			Vec3 posMid = entityPatch.getOriginal().getPosition((i + r.nextInt(3) - 1) / 10);

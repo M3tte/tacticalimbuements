@@ -6,6 +6,8 @@ import net.m3tte.tactical_imbuements.entity.*;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModEntities;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -35,7 +38,7 @@ public class UseImbueFlasks {
 
 
 		if (!world.isClientSide()) {
-			world.playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS, 1, 1);
+			world.playSound(null, BlockPos.containing(player.getX(), player.getY(), player.getZ()), SoundEvents.SPLASH_POTION_THROW, SoundSource.PLAYERS, 1, 1);
 		}
 		Projectile _entityToSpawn = new Object() {
 			public Projectile getArrow(Level level, Entity shooter, float damage, int knockback) {;
@@ -65,7 +68,7 @@ public class UseImbueFlasks {
 		weapon.getOrCreateTag().putDouble("maxImbueTime", TickProcedure.defaultMaxTime);
 		potion.shrink(1);
 		player.addItem(TacticalImbuementsModItems.FLASK.get().getDefaultInstance());
-		world.playSound(null, new BlockPos(player.getX(), player.getY(), player.getZ()), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation(applySound)), SoundSource.NEUTRAL, 1, 1);
+		world.playSound(null, BlockPos.containing(player.getX(), player.getY(), player.getZ()), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation(applySound)), SoundSource.NEUTRAL, 1, 1);
 	}
 
 	public static void useImbuementFlask(Level world, String flaskType, Player player, InteractionHand useHand) {
@@ -114,16 +117,25 @@ public class UseImbueFlasks {
 		}
 		ItemStack weaponItem = player.getItemInHand(weaponHand);
 		ItemStack itemStack = player.getItemInHand(flaskHand);
+		ResourceLocation resourceLocation = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
 
-
-		switch (itemStack.getItem().getRegistryName().getPath()) {
-			default:
-			case "flask_of_flame": applyImbuement(world, player, ImbuementDefinitions.FLAMEID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem); break;
-			case "flask_of_venom": applyImbuement(world, player, ImbuementDefinitions.VENOMID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem); break;
-			case "flask_of_ice": applyImbuement(world, player, ImbuementDefinitions.FREEZEID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem); break;
-			case "flask_of_sparks": applyImbuement(world, player, ImbuementDefinitions.SPARKID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem); break;
+		if (resourceLocation != null) {
+			switch (resourceLocation.getPath()) {
+				default:
+				case "flask_of_flame":
+					applyImbuement(world, player, ImbuementDefinitions.FLAMEID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem);
+					break;
+				case "flask_of_venom":
+					applyImbuement(world, player, ImbuementDefinitions.VENOMID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem);
+					break;
+				case "flask_of_ice":
+					applyImbuement(world, player, ImbuementDefinitions.FREEZEID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem);
+					break;
+				case "flask_of_sparks":
+					applyImbuement(world, player, ImbuementDefinitions.SPARKID, TickProcedure.defaultMaxTime, "item.firecharge.use", itemStack, weaponItem);
+					break;
+			}
 		}
-
 	}
 
 	public static LinkedList<String> getImbuements(LivingEntity entity) {

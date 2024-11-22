@@ -5,7 +5,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 
-@OnlyIn(Dist.CLIENT)
 public class GlassshardparticleParticle extends TextureSheetParticle {
 	public static GlassshardparticleParticleProvider provider(SpriteSet spriteSet) {
 		return new GlassshardparticleParticleProvider(spriteSet);

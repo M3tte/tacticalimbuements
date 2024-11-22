@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
-public class UseemptyflaskProcedure {
+public class UseEmptyFlaskProcedure {
 	public static void execute(Entity entity, ItemStack itemstack) {
 		if (entity == null)
 			return;
@@ -26,23 +26,18 @@ public class UseemptyflaskProcedure {
 				LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) living.getCapability(EpicFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
 				entitypatch.playAnimationSynchronized(ImbuementAnims.THROW_FLASK, 0);
 
-				(itemstack).shrink(1);
-				Entity _shootFrom = entity;
-				Level projectileLevel = _shootFrom.level;
-				if (!projectileLevel.isClientSide()) {
-					Projectile _entityToSpawn = new Object() {
-						public Projectile getArrow(Level level, Entity shooter, float damage, int knockback) {
-							AbstractArrow entityToSpawn = new EmptyflaskthrowableEntity(TacticalImbuementsModEntities.EMPTYFLASKTHROWABLE.get(), level);
-							entityToSpawn.setOwner(shooter);
-							entityToSpawn.setBaseDamage(damage);
-							entityToSpawn.setKnockback(knockback);
-							entityToSpawn.setSilent(true);
-							return entityToSpawn;
-						}
-					}.getArrow(projectileLevel, entity, 8, 1);
-					_entityToSpawn.setPos(_shootFrom.getX(), _shootFrom.getEyeY() - 0.1, _shootFrom.getZ());
-					_entityToSpawn.shoot(_shootFrom.getLookAngle().x, _shootFrom.getLookAngle().y, _shootFrom.getLookAngle().z, 1, (float) 0.1);
-					projectileLevel.addFreshEntity(_entityToSpawn);
+				Entity shooter = entity;
+				Level level = shooter.level();
+				if (!level.isClientSide()) {
+					(itemstack).shrink(1);
+					Projectile entityToSpawn = new EmptyflaskthrowableEntity(TacticalImbuementsModEntities.EMPTYFLASKTHROWABLE.get(), level);
+					entityToSpawn.setOwner(shooter);
+//					entityToSpawn.setBaseDamage(8);
+//					entityToSpawn.setKnockback(1);
+					entityToSpawn.setSilent(true);
+					entityToSpawn.setPos(shooter.getX(), shooter.getEyeY() - 0.1, shooter.getZ());
+					entityToSpawn.shoot(shooter.getLookAngle().x, shooter.getLookAngle().y, shooter.getLookAngle().z, 1, (float) 0.1);
+					level.addFreshEntity(entityToSpawn);
 				}
 			}
 		}

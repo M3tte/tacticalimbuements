@@ -1,39 +1,29 @@
 package net.m3tte.tactical_imbuements.mixin;
 
-import net.m3tte.tactical_imbuements.TacticalImbuementsMod;
-import net.m3tte.tactical_imbuements.client.particle.FlameparticleParticle;
 import net.m3tte.tactical_imbuements.definitions.ImbuementDefinitions;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsMobEffects;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModParticleTypes;
 import net.m3tte.tactical_imbuements.procedures.FlaskImpact;
 import net.m3tte.tactical_imbuements.procedures.UseImbueFlasks;
-import net.minecraft.client.particle.FlameParticle;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.LinkedList;
-import java.util.logging.LogManager;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
@@ -51,15 +41,16 @@ public class LivingEntityMixin {
 
             if (imbuements.contains(ImbuementDefinitions.SPARKID)) {
 
+                Level level = victim.level();
                 victim.setHealth(victim.getHealth() - amount * 0.2f);
 
-                if (!victim.level.isClientSide())
-                    victim.level.playSound(null, new BlockPos(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 1, 1);
+                if (!level.isClientSide())
+                    level.playSound(null, BlockPos.containing(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 1, 1);
                 else
-                    victim.level.playLocalSound(victim.getX(), victim.getY(), victim.getZ(), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 1, 1, false);
+                    level.playLocalSound(victim.getX(), victim.getY(), victim.getZ(), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.NEUTRAL, 1, 1, false);
 
-                if (victim.level instanceof ServerLevel)
-                    ((ServerLevel) victim.level).sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.SPARK_PARTICLE.get()), victim.getX(), victim.getY() + victim.getBbHeight() / 2, victim.getZ(), 7, 0.2, 0.2, 0.2, 0.25);
+                if (level instanceof ServerLevel serverLevel)
+                    serverLevel.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.SPARK_PARTICLE.get()), victim.getX(), victim.getY() + victim.getBbHeight() / 2, victim.getZ(), 7, 0.2, 0.2, 0.2, 0.25);
 
                 return amount - amount * 0.2f;
             }
@@ -77,26 +68,27 @@ public class LivingEntityMixin {
             if (source.getEntity() instanceof LivingEntity) {
                 LivingEntity attacker = (LivingEntity) source.getEntity();
                 LivingEntity victim = ((LivingEntity)(Object)this);
+                Level level = victim.level();
                 LinkedList<String> imbuements = UseImbueFlasks.getImbuements(attacker);
 
                 if (imbuements.contains(ImbuementDefinitions.FLAMEID)) {
                     if (!victim.isOnFire())
-                        if (!victim.level.isClientSide())
-                            victim.level.playSound(null, new BlockPos(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 1, 1);
+                        if (!level.isClientSide())
+                            level.playSound(null, BlockPos.containing(victim.getX(), victim.getY(), victim.getZ()), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 1, 1);
                         else
-                            victim.level.playLocalSound(victim.getX(), victim.getY(), victim.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 1, 1, false);
+                            level.playLocalSound(victim.getX(), victim.getY(), victim.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 1, 1, false);
 
                     victim.setSecondsOnFire((int)amount / 2);
-                    if (victim.level instanceof ServerLevel)
-                        ((ServerLevel) victim.level).sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.FLAME_PARTICLE.get()), victim.getX(), victim.getY() + victim.getBbHeight() / 2, victim.getZ(), 7, 0.2, 0.2, 0.2, 0.25);
+                    if (level instanceof ServerLevel serverLevel)
+                        serverLevel.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.FLAME_PARTICLE.get()), victim.getX(), victim.getY() + victim.getBbHeight() / 2, victim.getZ(), 7, 0.2, 0.2, 0.2, 0.25);
                 }
 
                 if (imbuements.contains(ImbuementDefinitions.VENOMID)) {
                     if (!victim.hasEffect(MobEffects.POISON))
-                        if (!victim.level.isClientSide())
-                            victim.level.playSound(null, new BlockPos(victim.getX(), victim.getY(), victim.getZ()), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
+                        if (!level.isClientSide())
+                            level.playSound(null, BlockPos.containing(victim.getX(), victim.getY(), victim.getZ()), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1);
                         else
-                            victim.level.playLocalSound(victim.getX(), victim.getY(), victim.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1, false);
+                            level.playLocalSound(victim.getX(), victim.getY(), victim.getZ(), ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("item.firecharge.use")), SoundSource.NEUTRAL, 1, 1, false);
 
                     victim.addEffect(new MobEffectInstance(MobEffects.POISON, (int)(amount * 12), 1));
 
@@ -109,11 +101,11 @@ public class LivingEntityMixin {
                     }
 
 
-                    if (victim.level instanceof ServerLevel)
-                        ((ServerLevel) victim.level).sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get()), victim.getX(), victim.getY() + victim.getBbHeight() / 2, victim.getZ(), 7, 0.2, 0.2, 0.2, 0.25);
+                    if (level instanceof ServerLevel serverLevel)
+                        serverLevel.sendParticles((SimpleParticleType) (TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get()), victim.getX(), victim.getY() + victim.getBbHeight() / 2, victim.getZ(), 7, 0.2, 0.2, 0.2, 0.25);
                 }
 
-                if (imbuements.contains(ImbuementDefinitions.FREEZEID) && !victim.level.isClientSide) {
+                if (imbuements.contains(ImbuementDefinitions.FREEZEID) && !level.isClientSide) {
                     FlaskImpact.tryIncreaseFreeze(1, amount, victim);
                 }
             }

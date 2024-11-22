@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TacticalImbuementsModEntities {
-	public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, TacticalImbuementsMod.MODID);
+	public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, TacticalImbuementsMod.MODID);
 	public static final RegistryObject<EntityType<EmptyflaskthrowableEntity>> EMPTYFLASKTHROWABLE = register("projectile_emptyflaskthrowable", EntityType.Builder.<EmptyflaskthrowableEntity>of(EmptyflaskthrowableEntity::new, MobCategory.MISC)
 			.setCustomClientFactory(EmptyflaskthrowableEntity::new).setShouldReceiveVelocityUpdates(true).setTrackingRange(64).setUpdateInterval(1).sized(0.5f, 0.5f));
 	public static final RegistryObject<EntityType<FireflaskthrowableEntity>> FIREFLASKTHROWABLE = register("projectile_fireflaskthrowable", EntityType.Builder.<FireflaskthrowableEntity>of(FireflaskthrowableEntity::new, MobCategory.MISC)

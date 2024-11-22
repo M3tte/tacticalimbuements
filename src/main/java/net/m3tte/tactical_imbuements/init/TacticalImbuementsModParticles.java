@@ -8,14 +8,14 @@ import net.m3tte.tactical_imbuements.client.particle.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class TacticalImbuementsModParticles {
 	@SubscribeEvent
-	public static void registerParticles(ParticleFactoryRegisterEvent event) {
+	public static void registerParticles(RegisterParticleProvidersEvent event) {
 		Minecraft.getInstance().particleEngine.register((SimpleParticleType) TacticalImbuementsModParticleTypes.GLASS_SHARD_PARTICLE.get(), GlassshardparticleParticle::provider);
 		Minecraft.getInstance().particleEngine.register((SimpleParticleType) TacticalImbuementsModParticleTypes.FLAME_PARTICLE.get(), FlameparticleParticle::provider);
 		Minecraft.getInstance().particleEngine.register((SimpleParticleType) TacticalImbuementsModParticleTypes.VENOM_PARTICLE.get(), VenomParticle::provider);
