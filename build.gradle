@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
@@ -115,5 +115,4 @@ tasks.withType(JavaCompile).configureEach {
 // This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')
 
-apply from: 'mcreator.gradle'
 

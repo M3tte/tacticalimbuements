@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.m3tte.tactical_imbuements.renderer.GlintRenderers;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -25,6 +26,7 @@ public class RenderBuffersMixin {
 
 
     private static MultiBufferSource.BufferSource savedBufferSource = null;
+    private static OutlineBufferSource savedOutlineBuffers = null;
 
     private static boolean hasRendered = false;
 
@@ -45,9 +47,18 @@ public class RenderBuffersMixin {
             put(fixedBuffers, GlintRenderers.getFreezeGlintDirect());
             put(fixedBuffers, GlintRenderers.getFreezeEntityGlintDirect());
             savedBufferSource = immediateWithBuffers(fixedBuffers, new BufferBuilder(256));
+            savedOutlineBuffers = new OutlineBufferSource(savedBufferSource);
         }
         cbk.setReturnValue(savedBufferSource);
     }
+
+    @Inject(at = @At(value = "TAIL"), method = "outlineBufferSource", cancellable = true)
+    private void injectOutlineBuffer(CallbackInfoReturnable<OutlineBufferSource> cbk) {
+        if (savedOutlineBuffers != null) {
+            cbk.setReturnValue(savedOutlineBuffers);
+        }
+    }
+
 
 
 
