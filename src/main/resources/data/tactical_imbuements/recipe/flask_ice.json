@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#",
+        "G"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:ice"
+        },
+        "G": {
+            "item": "tactical_imbuements:flask"
+        }
+    },
+    "result": {
+        "item": "tactical_imbuements:flask_of_ice",
+        "count": 1 
+    }
+}
