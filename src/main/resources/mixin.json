@@ -6,19 +6,18 @@
   "server": [
   ],
   "mixins": [
-    "TrailParticleInterface",
     "LivingEntityMixin",
-    "TrailParticleMixin",
     "ParryingSkillMixin",
-    "rectFillInvoker",
-    "renderBufferInterface",
-    "RenderBuffersMixin",
     "getItemInvoker",
     "ItemEntityTickMixin"
   ],
   "client": [
     "ItemRendererMixin",
     "GuiGraphicsMixin",
+    "TrailParticleMixin",
+    "TrailParticleInterface",
+    "renderBufferInterface",
+    "RenderBuffersMixin",
     "rectFillInvoker"
   ],
   "minVersion": "0.8"
