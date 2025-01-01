@@ -17,6 +17,11 @@ authors="M3tte"
     ordering="NONE"
     side="BOTH"
 
-
+[[dependencies.tactical_imbuements]]
+    modId="epicfight"
+    mandatory=true
+    versionRange="[18.5.13,)"
+    ordering="BEFORE"
+    side="BOTH"
 
 
