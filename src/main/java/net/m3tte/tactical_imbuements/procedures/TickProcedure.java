@@ -142,11 +142,11 @@ public class TickProcedure {
 
 	private static void doArmatureParticle(Joint j, LivingEntityPatch<?> entityPatch, SimpleParticleType particle, float amount, Vec3 particleSpeed, LinkedList<Vec3> offsets) {
 
-		Pose currentPose = entityPatch.getArmature().getCurrentPose();
+//		Pose currentPose = entityPatch.getArmature().getCurrentPose();
 		Level l = entityPatch.getOriginal().level();
 		RandomSource r = l.random;
 		for (float i = 1; i <= 9; i += 2f) {
-			Pose middlePose = entityPatch.getArmature().getPose((i + r.nextInt(3) - 1) / 10);
+			Pose middlePose = entityPatch.getAnimator().getPose((i + r.nextInt(3) - 1) / 10);
 			Vec3 posMid = entityPatch.getOriginal().getPosition((i + r.nextInt(3) - 1) / 10);
 
 			OpenMatrix4f middleModelTf = OpenMatrix4f.createTranslation((float)posMid.x, (float)posMid.y, (float)posMid.z)

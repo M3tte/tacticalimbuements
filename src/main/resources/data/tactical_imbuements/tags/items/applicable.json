@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:iron_sword",
-    "epicfight:iron_longsword",
-    "epicfight:iron_greatsword"
-  ]
-}

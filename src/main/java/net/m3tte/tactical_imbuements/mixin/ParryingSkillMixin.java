@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 @Mixin(GuardSkill.class)
 public class ParryingSkillMixin {
-    @Inject(at = @At(value = "HEAD"), method = "dealEvent", cancellable = true, remap=false)
+    @Inject(at = @At(value = "TAIL"), method = "dealEvent", cancellable = true, remap=false)
     public void guardInject(PlayerPatch<?> playerpatch, HurtEvent.Pre event, boolean advanced, CallbackInfo cbk) {
 
         Player player = playerpatch.getOriginal();
@@ -98,7 +98,7 @@ public class ParryingSkillMixin {
             }
         }
         if (imbuements.contains(ImbuementDefinitions.FLAMEID)) {
-            if (!playerpatch.hasStamina(0.0f) && !event.isParried()) {
+            if (!event.isParried()) {
                 oncePerHand((hand) -> {
 
                     ItemStack item = player.getItemInHand(hand);
@@ -114,8 +114,6 @@ public class ParryingSkillMixin {
                 });
 
                 flameKnockdown(playerpatch.getOriginal(), playerpatch);
-
-
 
             }
         }
