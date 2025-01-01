@@ -1,0 +1,30 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_sword",
+    "epicfight:iron_longsword",
+    "epicfight:iron_greatsword",
+    "epicfight:iron_dagger",
+    "epicfight:iron_tachi",
+    "minecraft:stone_sword",
+    "epicfight:stone_greatsword",
+    "minecraft:golden_sword",
+    "epicfight:golden_longsword",
+    "epicfight:golden_greatsword",
+    "epicfight:golden_spear",
+    "epicfight:golden_tachi",
+    "epicfight:golden_dagger",
+    "minecraft:diamond_sword",
+    "epicfight:diamond_longsword",
+    "epicfight:diamond_greatsword",
+    "epicfight:diamond_spear",
+    "epicfight:diamond_tachi",
+    "epicfight:diamond_dagger",
+    "minecraft:netherite_sword",
+    "epicfight:netherite_longsword",
+    "epicfight:netherite_greatsword",
+    "epicfight:netherite_spear",
+    "epicfight:netherite_tachi",
+    "epicfight:netherite_dagger"
+  ]
+}

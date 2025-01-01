@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#",
+        "G"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:spider_eye"
+        },
+        "G": {
+            "item": "tactical_imbuements:flask"
+        }
+    },
+    "result": {
+        "item": "tactical_imbuements:flask_of_venom",
+        "count": 1 
+    }
+}

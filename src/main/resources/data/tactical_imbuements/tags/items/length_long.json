@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "epicfight:stone_greatsword",
+    "epicfight:stone_spear",
+    "epicfight:iron_greatsword",
+    "epicfight:iron_dagger",
+    "epicfight:golden_greatsword",
+    "epicfight:golden_spear",
+    "epicfight:golden_dagger",
+    "epicfight:diamond_greatsword",
+    "epicfight:diamond_spear",
+    "epicfight:diamond_dagger",
+    "epicfight:netherite_greatsword",
+    "epicfight:netherite_spear",
+    "epicfight:netherite_dagger"
+
+  ]
+}
