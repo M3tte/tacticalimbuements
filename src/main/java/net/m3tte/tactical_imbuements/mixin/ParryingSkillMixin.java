@@ -22,15 +22,22 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import yesman.epicfight.model.armature.HumanoidArmature;
+import yesman.epicfight.skill.Skill;
+import yesman.epicfight.skill.SkillContainer;
+import yesman.epicfight.skill.SkillDataKey;
+import yesman.epicfight.skill.SkillDataKeys;
 import yesman.epicfight.skill.guard.GuardSkill;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.EntityPatch;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
+import yesman.epicfight.world.capabilities.entitypatch.player.ServerPlayerPatch;
+import yesman.epicfight.world.capabilities.item.CapabilityItem;
 import yesman.epicfight.world.damagesource.StunType;
 import yesman.epicfight.world.entity.eventlistener.HurtEvent;
 
@@ -42,9 +49,46 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Mixin(GuardSkill.class)
-public class ParryingSkillMixin {
-    @Inject(at = @At(value = "TAIL"), method = "dealEvent", cancellable = true, remap=false)
-    public void guardInject(PlayerPatch<?> playerpatch, HurtEvent.Pre event, boolean advanced, CallbackInfo cbk) {
+public abstract class ParryingSkillMixin {
+
+
+    @Shadow protected abstract float getPenalizer(CapabilityItem itemCapability);
+
+    @Inject(at = @At(value = "TAIL"), method = "guard", remap=false)
+    public void guardInject(SkillContainer container, CapabilityItem itemCapability, HurtEvent.Pre event, float knockback, float impact, boolean advanced, CallbackInfo ci) {
+
+
+        ServerPlayer player = event.getPlayerPatch().getOriginal();
+        LinkedList<String> imbuements = UseImbueFlasks.getImbuements(player);
+        if (imbuements.contains(ImbuementDefinitions.FLAMEID)) {
+
+            float penalty = (Float)container.getDataManager().getDataValue((SkillDataKey)SkillDataKeys.PENALTY.get()) + getPenalizer(itemCapability);
+            float consumeAmount = penalty * impact;
+            boolean canAfford = ((ServerPlayerPatch)event.getPlayerPatch()).consumeForSkill(((GuardSkill) (Object) this), Skill.Resource.STAMINA, consumeAmount);
+
+
+            if (!canAfford && !event.isParried()) {
+                oncePerHand((hand) -> {
+
+                    ItemStack item = player.getItemInHand(hand);
+
+                    if (item.getTag() == null)
+                        return;
+
+                    if (item.getOrCreateTag().getString("imbueType").equals(ImbuementDefinitions.FLAMEID)) {
+                        item.getOrCreateTag().putDouble("imbueCounter", player.tickCount);
+                        item.hurt(60, player.getRandom(), player);
+                    }
+                });
+
+                flameKnockdown(player, event.getPlayerPatch());
+
+            }
+        }
+    }
+
+    @Inject(at = @At(value = "HEAD"), method = "dealEvent", cancellable = true, remap=false)
+    public void dealInject(PlayerPatch<?> playerpatch, HurtEvent.Pre event, boolean advanced, CallbackInfo cbk) {
 
         Player player = playerpatch.getOriginal();
         Level level = player.level();
@@ -97,26 +141,9 @@ public class ParryingSkillMixin {
                 }
             }
         }
-        if (imbuements.contains(ImbuementDefinitions.FLAMEID)) {
-            if (!event.isParried()) {
-                oncePerHand((hand) -> {
 
-                    ItemStack item = player.getItemInHand(hand);
 
-                    if (item.getTag() == null)
-                        return;
 
-                    if (item.getOrCreateTag().getString("imbueType").equals(ImbuementDefinitions.FLAMEID)) {
-                        item.getOrCreateTag().putDouble("imbueCounter", player.tickCount);
-                        if (player instanceof ServerPlayer serverPlayer)
-                            item.hurt(60, serverPlayer.getRandom(), serverPlayer);
-                    }
-                });
-
-                flameKnockdown(playerpatch.getOriginal(), playerpatch);
-
-            }
-        }
     }
     private static void oncePerHand(Consumer<InteractionHand> c) {
             c.accept(InteractionHand.MAIN_HAND);
