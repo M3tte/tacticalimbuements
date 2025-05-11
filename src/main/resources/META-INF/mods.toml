@@ -4,7 +4,7 @@ license="Academic Free License v3.0"
 
 [[mods]]
 modId="tactical_imbuements"
-version="0.12.0"
+version="0.13.0"
 displayName="Tactical Imbuements"
 credits=""
 displayURL=""
@@ -20,7 +20,7 @@ authors="M3tte"
 [[dependencies.tactical_imbuements]]
     modId="epicfight"
     mandatory=true
-    versionRange="[20.9.6,)"
+    versionRange="[20.10.3,)"
     ordering="BEFORE"
     side="BOTH"
 

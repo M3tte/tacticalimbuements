@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkEvent;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModParticleTypes;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModItems;
 import net.m3tte.tactical_imbuements.init.TacticalImbuementsModEntities;
+import yesman.epicfight.api.animation.AnimationManager;
 
 import java.util.function.Supplier;
 import java.util.function.Function;
@@ -51,7 +53,6 @@ public class TacticalImbuementsMod {
 		TacticalImbuementsModItems.REGISTRY.register(bus);
 		TacticalImbuementsModEntities.REGISTRY.register(bus);
 		TacticalImbuementsMobEffects.REGISTRY.register(bus);
-		bus.addListener(ImbuementAnims::registerAnimations);
 		bus.addListener(this::addModItems);
 		TacticalImbuementsModParticleTypes.REGISTRY.register(bus);
 	}
@@ -60,6 +61,14 @@ public class TacticalImbuementsMod {
 		PACKET_HANDLER.registerMessage(messageID, messageType, encoder, decoder, messageConsumer);
 		messageID++;
 	}
+	@Mod.EventBusSubscriber(modid = TacticalImbuementsMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+	public class EpicFightEventHooks {
+		@SubscribeEvent
+		public static void registerEpicFightAnimations(AnimationManager.AnimationRegistryEvent event) {
+			event.newBuilder(TacticalImbuementsMod.MODID, ImbuementAnims::registerAnimations);
+		}
+	}
+
 
 	public void addModItems(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.COMBAT) {
