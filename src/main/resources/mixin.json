@@ -14,8 +14,9 @@
   "client": [
     "ItemRendererMixin",
     "GuiGraphicsMixin",
-    "TrailParticleMixin",
-    "TrailParticleInterface",
+    "AbstractTrailParticleAccessor",
+    "AnimationTrailParticleAccessor",
+    "AnimationTrailParticleMixin",
     "renderBufferInterface",
     "RenderBuffersMixin",
     "rectFillInvoker"
